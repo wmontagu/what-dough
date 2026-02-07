@@ -4,6 +4,7 @@
 .*env*
 .venv*
 /node_modules
+/backend/__pycache__
 /.pnp
 .pnp.*
 .yarn/*

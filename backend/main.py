@@ -91,7 +91,7 @@ async def analyze_event(request: AnalyzeEventRequest):
                     why_it_fits=s.get("why_it_fits", ""),
                     fit_score=max(0, min(1, s.get("fit_score", 0.5))),
                     location=s.get("location"),
-                    booking_link=s.get("booking_link"),
+                    booking_link=s.get("booking_link") or s.get("booking_url"),
                 )
                 for s in suggestions_raw
             ],

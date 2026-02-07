@@ -21,7 +21,10 @@
       "WebFetch(domain:docs.dedaluslabs.ai)",
       "WebFetch(domain:deepwiki.com)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:www.dedaluslabs.ai)"
+      "WebFetch(domain:www.dedaluslabs.ai)",
+      "Bash(npx next lint:*)",
+      "Bash(npx tsc:*)",
+      "mcp__supabase__get_advisors"
     ]
   }
 }

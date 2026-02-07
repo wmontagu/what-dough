@@ -116,7 +116,8 @@ def score_venues_tool(venues: list[dict], preferences: dict, budgets: dict) -> l
         if budget_min <= cost <= budget_max:
             score += 0.25
         elif cost < budget_min:
-            score += 0.15
+            # Free/cheap activities ($0-5) that match preferences shouldn't be penalized much
+            score += 0.20 if cost <= 5 else 0.15
         else:
             overage_pct = (cost - budget_max) / budget_max if budget_max > 0 else 1
             score -= min(0.3, overage_pct * 0.5)

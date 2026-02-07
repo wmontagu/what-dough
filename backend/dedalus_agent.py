@@ -5,6 +5,7 @@ import logging
 import os
 import time
 from typing import Any
+from urllib.parse import quote_plus
 
 from tools import (
     calculate_consensus_budget_tool,
@@ -31,9 +32,12 @@ async def process_event(
 
     if dedalus_api_key:
         try:
-            return await _run_with_dedalus(
+            result = await _run_with_dedalus(
                 dedalus_api_key, event_name, activity_type, zipcode, participants
             )
+            if result.get("suggestions"):
+                return result
+            logger.warning("Dedalus returned no suggestions, falling back to local pipeline")
         except Exception as e:
             logger.warning(f"Dedalus SDK error ({e}), falling back to local pipeline")
 
@@ -88,7 +92,7 @@ def _run_local(
             "why_it_fits": v.get("why_it_fits", ""),
             "fit_score": v.get("fit_score", 0.5),
             "location": v.get("location", ""),
-            "booking_link": v.get("booking_link"),
+            "booking_link": v.get("booking_link") or _google_maps_link(v["name"], v.get("location", "")),
         }
         for v in scored[:6]
     ]
@@ -133,18 +137,39 @@ async def _run_with_dedalus(
     prompt = (
         f"I'm planning a group activity called '{event_name}' near zipcode {zipcode}.\n\n"
         f"Participants:\n{members_summary}\n\n"
-        f"Consensus budget: ${consensus['min']}-${consensus['max']} per person "
+        f"Target Budget: ${consensus['min']} - ${consensus['max']} per person "
         f"({'exact overlap' if consensus['has_overlap'] else 'compromise average'}).\n\n"
-        f"Search for real activities, restaurants, and venues near zipcode {zipcode} "
-        f"that fit within the ${consensus['min']}-${consensus['max']} per person budget. "
-        f"Consider each participant's preferences.\n\n"
+        
+        f"Search for real activities, restaurants, and venues near zipcode {zipcode}. "
+        f"CRITICAL: Prioritize suggestions that fall WITHIN the ${consensus['min']}-${consensus['max']} range. "
+        f"This budget reflects the group's desired level of spending/experience quality. "
+        
+        f"While high-quality activities costing less than ${consensus['min']} "
+        f"can be included, they should make up no more than ONE of your total suggestions. "
+        f"Exclude any options that exceed ${consensus['max']}.\n\n"
+        
+        f"Diversity Requirement: Provide a balanced mix of activity types. "
+        f"Ensure at least 3 different 'types' from the JSON schema are represented. "
+        f"Consider each participant's preferences specifically.\n\n"
+        
+        f"If search tools are available, use them to find real venues. "
+        f"If search tools are NOT available, use your own knowledge of real places near {zipcode} — "
+        f"do NOT refuse or apologize, just provide your best suggestions of real venues. "
+        f"For booking_url, include a real URL if you know one, otherwise set it to null.\n\n"
+        
         f"Return a JSON object with exactly this structure:\n"
         f'{{"suggestions": [{{"name": "...", "type": "dining|entertainment|outdoors|nightlife|sports|arts", '
-        f'"cost_per_person": 25, "why_it_fits": "...", "fit_score": 0.85, "location": "..."}}]}}\n\n'
+        f'"cost_per_person": 25, "why_it_fits": "...", "fit_score": 0.85, "location": "...", '
+        f'"booking_url": "..."}}]}}\n\n'
+        
         f"Return 5-6 suggestions sorted by fit_score (0 to 1). Only return the JSON, no other text."
     )
 
     logger.info(f"Calling Dedalus with multi-model handoff for zipcode {zipcode}")
+    logger.info(f"=== DEDALUS PROMPT ===\n{prompt}\n=== END PROMPT ===")
+    logger.info(f"Models: {['google/gemini-2.0-flash', 'anthropic/claude-sonnet-4-5-20250929', 'openai/gpt-4o']}")
+    logger.info(f"MCP servers: {['dedalus-labs/brave-search-mcp']}")
+    logger.info(f"Tools: {[parse_preferences_tool.__name__, score_venues_tool.__name__]}")
 
     result = await runner.run(
         input=prompt,
@@ -158,6 +183,27 @@ async def _run_with_dedalus(
     )
 
     logger.info(f"Dedalus result type: {type(result)}")
+
+    # Log every attribute on the result object for debugging
+    for attr in dir(result):
+        if not attr.startswith("_"):
+            try:
+                val = getattr(result, attr)
+                if not callable(val):
+                    logger.info(f"  result.{attr} = {repr(val)[:500]}")
+            except Exception as e:
+                logger.info(f"  result.{attr} = <error: {e}>")
+
+    raw_output = getattr(result, "final_output", None)
+    logger.info(f"=== DEDALUS RAW OUTPUT (type={type(raw_output).__name__}) ===\n{repr(raw_output)[:2000]}\n=== END RAW OUTPUT ===")
+
+    # Log steps/trace if available
+    steps = getattr(result, "steps", None) or getattr(result, "trace", None) or getattr(result, "messages", None)
+    if steps:
+        logger.info(f"=== DEDALUS STEPS ({len(steps)} total) ===")
+        for i, step in enumerate(steps):
+            logger.info(f"  Step {i}: {repr(step)[:500]}")
+        logger.info("=== END STEPS ===")
 
     # Parse the result
     output = _parse_dedalus_result(result)
@@ -193,6 +239,12 @@ def _parse_dedalus_result(result: Any) -> dict:
             logger.warning(f"Could not parse Dedalus output as JSON: {cleaned[:200]}")
 
     return {"suggestions": [], "raw": str(raw)[:500]}
+
+
+def _google_maps_link(name: str, location: str = "") -> str:
+    """Build a Google Maps search URL as a fallback link."""
+    query = f"{name} {location}".strip()
+    return f"https://www.google.com/maps/search/?api=1&query={quote_plus(query)}"
 
 
 # ------------------------------------------------------------------

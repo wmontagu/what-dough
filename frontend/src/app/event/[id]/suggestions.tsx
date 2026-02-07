@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Loader2, DollarSign, Star, MapPin } from "lucide-react";
+import { Sparkles, Loader2, DollarSign, Star, MapPin, ExternalLink } from "lucide-react";
 
 type Suggestion = {
   name: string;
@@ -173,6 +173,20 @@ export function Suggestions({
                   </span>
                 )}
               </div>
+
+              {s.booking_link && (
+                <a
+                  href={s.booking_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-money hover:underline"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  {s.booking_link.includes("google.com/maps")
+                    ? "View on Maps"
+                    : "Book / Get Tickets"}
+                </a>
+              )}
             </div>
           ))}
         </CardContent>
