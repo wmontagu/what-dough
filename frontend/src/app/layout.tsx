@@ -27,8 +27,8 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${mono.variable} antialiased`}>
-        <main className="h-screen flex flex-col bg-background">
-          <div className="mx-24 px-4 pt-6 pb-2 shrink-0">
+        <main className="min-h-screen md:h-screen md:max-h-screen flex flex-col bg-background overflow-y-auto md:overflow-hidden">
+          <div className="mx-4 sm:mx-8 md:mx-24 px-4 pt-6 pb-2 shrink-0">
             <header>
               <Link href="/" className="hover:opacity-80 transition-opacity">
                 <h1 className="text-2xl font-bold tracking-tight uppercase">
@@ -40,7 +40,7 @@ export default async function RootLayout({
               </p>
             </header>
           </div>
-          <div className="mx-24 px-4 py-4 flex-1 min-h-0">
+          <div className="mx-4 sm:mx-8 md:mx-24 px-4 py-4 flex-1 min-h-0 pb-6 md:pb-4">
             {children}
           </div>
           {count !== null && (

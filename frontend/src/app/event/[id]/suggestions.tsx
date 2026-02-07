@@ -130,15 +130,15 @@ export function Suggestions({
   }
 
   return (
-    <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full">
+    <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col max-h-[33vh] md:max-h-none md:h-full overflow-hidden">
       <CardHeader className="shrink-0">
-        <CardTitle className="text-2xl font-bold uppercase tracking-wide flex items-center gap-2">
+        <CardTitle className="text-xl sm:text-2xl font-bold uppercase tracking-wide flex items-center gap-2">
           <Sparkles className="h-5 w-5" />
           What Dough We Do?
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 min-h-0">
-        <div className="h-full overflow-y-auto scrollbar-brutal pr-2 space-y-3">
+      <CardContent className="flex-1 min-h-0 overflow-y-auto scrollbar-brutal">
+        <div className="space-y-3">
         {data.suggestions.map((s, i) => (
           <div
             key={i}
@@ -159,7 +159,7 @@ export function Suggestions({
               </div>
             </div>
 
-            <p className="text-xs text-muted-foreground">{s.why_it_fits}</p>
+            <p className="hidden md:block text-xs text-muted-foreground">{s.why_it_fits}</p>
 
             <div className="flex items-center gap-4 text-xs">
               <span className="flex items-center gap-1 font-bold">

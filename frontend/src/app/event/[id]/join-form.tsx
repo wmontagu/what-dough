@@ -25,9 +25,9 @@ export function JoinForm({ eventId }: { eventId: string }) {
   );
 
   return (
-    <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] h-full">
+    <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:h-full">
       <CardHeader>
-        <CardTitle className="uppercase tracking-wide text-2xl">
+        <CardTitle className="uppercase tracking-wide text-xl sm:text-2xl">
           Join the plan
         </CardTitle>
       </CardHeader>

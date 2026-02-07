@@ -53,22 +53,45 @@ export default async function EventPage({
   const hasTimeRange = event.time_start || event.time_end;
 
   return (
-    <div className="flex flex-col md:h-full gap-4 px-8">
+    <div className="flex flex-col md:h-full gap-4 px-0 sm:px-4 md:px-8">
+      {/* Event name — always on top */}
+      <Card className="border-2 py-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0 md:hidden">
+        <CardContent className="flex items-center gap-3">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wide">
+              Event:
+            </h2>
+            <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wide break-words">
+              {event.name}
+            </h2>
+          </div>
+          {isClosed && (
+            <Badge
+              variant="outline"
+              className="border-2 border-foreground font-bold uppercase text-xs shrink-0 flex items-center gap-1"
+            >
+              <Lock className="h-3 w-3" />
+              Closed
+            </Badge>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Left + Right columns */}
-      <div className="flex flex-col md:flex-row md:flex-1 md:min-h-0 md:items-stretch gap-3 pb-1">
-        {/* Left column: event name + details */}
-        <div className="flex flex-col md:w-80 md:shrink-0 md:min-h-0 gap-4">
-          {/* Event name box */}
-          <Card className="border-2 py-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0">
+      <div className="flex flex-col md:flex-row md:flex-1 md:min-h-0 md:items-stretch gap-3 pb-4 md:pb-1">
+        {/* Left column: event name (desktop) + details (below join form on mobile) */}
+        <div className="order-2 md:order-1 flex flex-col md:w-80 md:shrink-0 md:min-h-0 gap-4">
+          {/* Event name box — desktop only (mobile version is above) */}
+          <Card className="hidden md:flex border-2 py-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0">
             <CardContent className="flex items-center gap-3">
               <div>
-              <h2 className="text-2xl font-bold uppercase tracking-wide">
-                Event:
-              </h2>
-              <h2 className="text-2xl font-bold uppercase tracking-wide">
-                {event.name}
+                <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wide">
+                  Event:
                 </h2>
-                </div>
+                <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wide break-words">
+                  {event.name}
+                </h2>
+              </div>
               {isClosed && (
                 <Badge
                   variant="outline"
@@ -82,7 +105,7 @@ export default async function EventPage({
           </Card>
 
           {/* Details box */}
-          <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-1 md:min-h-0">
+          <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-1 md:min-h-0 overflow-hidden">
             <CardHeader className="shrink-0">
               <CardTitle className="text-sm font-bold uppercase tracking-wide">
                 Details
@@ -149,15 +172,15 @@ export default async function EventPage({
           </Card>
         </div>
 
-        {/* Right column: join form when open, suggestions when closed */}
+        {/* Right column: join form when open, suggestions when closed (above details on mobile) */}
         {!isClosed ? (
-          <div className="flex-1 md:overflow-y-auto scrollbar-brutal md:min-h-0">
+          <div className="order-1 md:order-2 flex-1 md:overflow-y-auto scrollbar-brutal md:min-h-0">
             <div className="max-w-2xl mx-auto h-full">
               <JoinForm eventId={id} />
             </div>
           </div>
         ) : (
-          <div className="flex-1 md:min-h-0">
+          <div className="order-1 md:order-2 flex-1 md:min-h-0">
             <Suggestions
               eventName={event.name}
               zipcode={event.zipcode}
