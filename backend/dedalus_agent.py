@@ -149,8 +149,8 @@ async def _run_with_dedalus(
     result = await runner.run(
         input=prompt,
         model=[
-            "google/gemini-2.0-flash-exp",
-            "anthropic/claude-sonnet-4-20250514",
+            "google/gemini-2.0-flash",
+            "anthropic/claude-sonnet-4-5-20250929",
             "openai/gpt-4o",
         ],
         mcp_servers=["dedalus-labs/brave-search-mcp"],

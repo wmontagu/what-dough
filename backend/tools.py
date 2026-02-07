@@ -66,7 +66,7 @@ def parse_preferences_tool(raw_text: str) -> dict:
     }
 
 
-def calculate_consensus_budget_tool(member_budgets: list) -> dict:
+def calculate_consensus_budget_tool(member_budgets: list[list[float]]) -> dict:
     """Find the overlapping budget range that works for all group members.
 
     member_budgets: list of [min, max] pairs.
@@ -95,7 +95,7 @@ def calculate_consensus_budget_tool(member_budgets: list) -> dict:
         }
 
 
-def score_venues_tool(venues: list, preferences: dict, budgets: dict) -> list:
+def score_venues_tool(venues: list[dict], preferences: dict, budgets: dict) -> list[dict]:
     """Score and rank venues against group preferences and budget."""
     logger.info(f"score_venues_tool: {len(venues)} venues")
 
