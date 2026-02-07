@@ -12,17 +12,17 @@ type Participant = {
   created_at: string;
 };
 
-export function ParticipantList({
-  eventId,
-  initialParticipants,
-  isClosed,
-}: {
-  eventId: string;
-  initialParticipants: Participant[];
-  isClosed: boolean;
-}) {
+function useParticipants(
+  eventId: string,
+  initialParticipants: Participant[],
+  isClosed: boolean
+) {
   const [participants, setParticipants] =
     useState<Participant[]>(initialParticipants);
+
+  useEffect(() => {
+    setParticipants(initialParticipants);
+  }, [initialParticipants.length]);
 
   useEffect(() => {
     if (isClosed) return;
@@ -50,7 +50,20 @@ export function ParticipantList({
     };
   }, [eventId, isClosed]);
 
-  // Calculate aggregate price point from all participants' budgets
+  return participants;
+}
+
+export function BudgetSummary({
+  eventId,
+  initialParticipants,
+  isClosed,
+}: {
+  eventId: string;
+  initialParticipants: Participant[];
+  isClosed: boolean;
+}) {
+  const participants = useParticipants(eventId, initialParticipants, isClosed);
+
   const overlapMin = Math.max(...participants.map((p) => p.min_budget), 0);
   const overlapMax = Math.min(
     ...participants.map((p) => p.max_budget),
@@ -73,6 +86,57 @@ export function ParticipantList({
         )
       : 0;
 
+  if (!isClosed || participants.length === 0) return null;
+
+  return hasOverlap ? (
+    <div className="border-2 border-money bg-money/10 p-4">
+      <p className="text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+        <DollarSign className="h-3 w-3" />
+        Desired Price Point
+      </p>
+      <p className="text-lg font-bold">
+        ${overlapMin}&ndash;${overlapMax}
+        <span className="text-xs text-muted-foreground ml-2">per person</span>
+      </p>
+      <p className="text-xs text-muted-foreground mt-1">
+        Based on the overlap of all {participants.length} participants&apos; budgets
+      </p>
+    </div>
+  ) : (
+    <div className="space-y-3">
+      <div className="border-2 border-destructive bg-destructive/10 p-4">
+        <p className="text-xs font-bold uppercase tracking-wider mb-1">
+          No exact budget overlap
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Participants&apos; budgets don&apos;t perfectly overlap
+        </p>
+      </div>
+      <div className="border-2 border-foreground bg-muted/50 p-4">
+        <p className="text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+          <DollarSign className="h-3 w-3" />
+          Average Price Range
+        </p>
+        <p className="text-lg font-bold">
+          ${avgMin}&ndash;${avgMax}
+          <span className="text-xs text-muted-foreground ml-2">per person</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export function ParticipantList({
+  eventId,
+  initialParticipants,
+  isClosed,
+}: {
+  eventId: string;
+  initialParticipants: Participant[];
+  isClosed: boolean;
+}) {
+  const participants = useParticipants(eventId, initialParticipants, isClosed);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -82,7 +146,6 @@ export function ParticipantList({
         </span>
       </div>
 
-      {/* Sidebar: Show only names — budget and preferences are never shown per-participant */}
       {participants.length > 0 && (
         <div className="space-y-2">
           {participants.map((p) => (
@@ -96,54 +159,6 @@ export function ParticipantList({
         </div>
       )}
 
-      {/* Closed state: Show aggregate price point */}
-      {isClosed && participants.length > 0 && (
-        <div className="space-y-3">
-          {hasOverlap ? (
-            <div className="border-2 border-money bg-money/10 p-4">
-              <p className="text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                <DollarSign className="h-3 w-3" />
-                Desired Price Point
-              </p>
-              <p className="text-lg font-bold">
-                ${overlapMin}&ndash;${overlapMax}
-                <span className="text-xs text-muted-foreground ml-2">
-                  per person
-                </span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Based on the overlap of all {participants.length} participants&apos;
-                budgets
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="border-2 border-destructive bg-destructive/10 p-4">
-                <p className="text-xs font-bold uppercase tracking-wider mb-1">
-                  No exact budget overlap
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Participants&apos; budgets don&apos;t perfectly overlap
-                </p>
-              </div>
-              <div className="border-2 border-foreground bg-muted/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                  <DollarSign className="h-3 w-3" />
-                  Average Price Range
-                </p>
-                <p className="text-lg font-bold">
-                  ${avgMin}&ndash;${avgMax}
-                  <span className="text-xs text-muted-foreground ml-2">
-                    per person
-                  </span>
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Join phase: no budget info shown */}
       {!isClosed && participants.length === 0 && (
         <p className="text-sm text-muted-foreground">
           No one has joined yet. Share the link to get started!

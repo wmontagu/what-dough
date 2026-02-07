@@ -130,67 +130,67 @@ export function Suggestions({
   }
 
   return (
-    <div className="space-y-4">
-      <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-bold uppercase tracking-wide flex items-center gap-2">
-            <Sparkles className="h-4 w-4" />
-            AI Suggestions
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {data.suggestions.map((s, i) => (
-            <div
-              key={i}
-              className="border-2 border-foreground p-4 space-y-2"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="font-bold text-sm">{s.name}</h3>
-                  <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                    {s.type}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <Star className="h-3 w-3" />
-                  <span className="text-xs font-bold">
-                    {Math.round(s.fit_score * 100)}%
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-xs text-muted-foreground">{s.why_it_fits}</p>
-
-              <div className="flex items-center gap-4 text-xs">
-                <span className="flex items-center gap-1 font-bold">
-                  <DollarSign className="h-3 w-3" />
-                  {s.cost_per_person}/person
+    <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full">
+      <CardHeader className="shrink-0">
+        <CardTitle className="text-2xl font-bold uppercase tracking-wide flex items-center gap-2">
+          <Sparkles className="h-5 w-5" />
+          What Dough We Do?
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 min-h-0">
+        <div className="h-full overflow-y-auto scrollbar-brutal pr-2 space-y-3">
+        {data.suggestions.map((s, i) => (
+          <div
+            key={i}
+            className="border-2 border-foreground p-4 space-y-2"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h3 className="font-bold text-sm">{s.name}</h3>
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {s.type}
                 </span>
-                {s.location && (
-                  <span className="flex items-center gap-1 text-muted-foreground">
-                    <MapPin className="h-3 w-3" />
-                    {s.location}
-                  </span>
-                )}
               </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <Star className="h-3 w-3" />
+                <span className="text-xs font-bold">
+                  {Math.round(s.fit_score * 100)}%
+                </span>
+              </div>
+            </div>
 
-              {s.booking_link && (
-                <a
-                  href={s.booking_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-money hover:underline"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                  {s.booking_link.includes("google.com/maps")
-                    ? "View on Maps"
-                    : "Book / Get Tickets"}
-                </a>
+            <p className="text-xs text-muted-foreground">{s.why_it_fits}</p>
+
+            <div className="flex items-center gap-4 text-xs">
+              <span className="flex items-center gap-1 font-bold">
+                <DollarSign className="h-3 w-3" />
+                {s.cost_per_person}/person
+              </span>
+              {s.location && (
+                <span className="flex items-center gap-1 text-muted-foreground">
+                  <MapPin className="h-3 w-3" />
+                  {s.location}
+                </span>
               )}
             </div>
-          ))}
-        </CardContent>
-      </Card>
-    </div>
+
+            {s.booking_link && (
+              <a
+                href={s.booking_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-money hover:underline"
+              >
+                <ExternalLink className="h-3 w-3" />
+                {s.booking_link.includes("google.com/maps")
+                  ? "View on Maps"
+                  : "Book / Get Tickets"}
+              </a>
+            )}
+          </div>
+        ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

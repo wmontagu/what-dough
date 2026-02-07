@@ -9,7 +9,7 @@ export default function Home() {
     <Card className="border-2 max-w-lg mx-auto border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <CardHeader>
         <CardTitle className="uppercase tracking-wide text-lg">
-          Start a plan
+          Create new event
         </CardTitle>
       </CardHeader>
       <CardContent>

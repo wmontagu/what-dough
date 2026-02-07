@@ -84,3 +84,19 @@
     @apply bg-background text-foreground font-mono;
   }
 }
+
+/* Neo-brutalist scrollbar */
+.scrollbar-brutal {
+  scrollbar-width: thin;
+  scrollbar-color: var(--foreground) transparent;
+}
+.scrollbar-brutal::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-brutal::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-brutal::-webkit-scrollbar-thumb {
+  background-color: var(--foreground);
+  border: 1px solid var(--foreground);
+}

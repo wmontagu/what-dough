@@ -67,6 +67,8 @@ export async function joinEvent(formData: FormData) {
   if (error) {
     throw new Error("Failed to join event");
   }
+
+  revalidatePath(`/event/${eventId}`);
 }
 
 export async function closeEvent(formData: FormData) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,10 +10,12 @@ import { BudgetSlider } from "@/components/budget-slider";
 import { joinEvent } from "@/app/actions";
 
 export function JoinForm({ eventId }: { eventId: string }) {
+  const router = useRouter();
   const [error, formAction, isPending] = useActionState(
     async (_prev: string | null, formData: FormData) => {
       try {
         await joinEvent(formData);
+        router.refresh();
         return null;
       } catch {
         return "Failed to join. Try again.";
@@ -22,9 +25,9 @@ export function JoinForm({ eventId }: { eventId: string }) {
   );
 
   return (
-    <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+    <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] h-full">
       <CardHeader>
-        <CardTitle className="uppercase tracking-wide text-lg">
+        <CardTitle className="uppercase tracking-wide text-2xl">
           Join the plan
         </CardTitle>
       </CardHeader>
