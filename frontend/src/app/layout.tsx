@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${mono.variable} antialiased`}>
         <main className="min-h-screen bg-background">
-          <div className="mx-auto max-w-lg px-4 py-12">
+          <div className="ml-24 px-4 py-12">
             <header className="mb-8">
               <h1 className="text-2xl font-bold tracking-tight uppercase">
                 what dough<span className="text-money">.</span>

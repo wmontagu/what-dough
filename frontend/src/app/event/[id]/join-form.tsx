@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { BudgetSlider } from "@/components/budget-slider";
 import { joinEvent } from "@/app/actions";
@@ -33,7 +34,7 @@ export function JoinForm({ eventId }: { eventId: string }) {
 
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider">
-              Your name
+              Your name *
             </label>
             <Input
               name="name"
@@ -45,9 +46,21 @@ export function JoinForm({ eventId }: { eventId: string }) {
 
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider">
-              Your budget range
+              Your budget range *
             </label>
             <BudgetSlider nameMin="minBudget" nameMax="maxBudget" />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider">
+              Preferences
+            </label>
+            <Textarea
+              name="preferences"
+              placeholder="Thai food, scary movie, outdoor activity..."
+              rows={2}
+              className="border-2 border-foreground"
+            />
           </div>
 
           {error && (

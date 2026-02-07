@@ -1,14 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { BudgetSlider } from "@/components/budget-slider";
 import { createEvent } from "./actions";
-
-const ACTIVITY_TYPES = ["dinner", "drinks", "trip", "event", "gift", "other"];
 
 export default function Home() {
   return (
-    <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+    <Card className="border-2 max-w-lg mx-auto border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <CardHeader>
         <CardTitle className="uppercase tracking-wide text-lg">
           Start a plan
@@ -18,7 +16,7 @@ export default function Home() {
         <form action={createEvent} className="space-y-6">
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider">
-              What&apos;s the plan?
+              Event name *
             </label>
             <Input
               name="name"
@@ -30,54 +28,60 @@ export default function Home() {
 
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider">
-              Where?
+              Description
             </label>
-            <Input
-              name="location"
-              placeholder="Downtown, NYC"
+            <Textarea
+              name="description"
+              placeholder="What's the occasion? Any details people should know?"
+              rows={3}
               className="border-2 border-foreground"
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider">
-              Type
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {ACTIVITY_TYPES.map((type) => (
-                <label key={type} className="cursor-pointer">
-                  <input
-                    type="radio"
-                    name="activityType"
-                    value={type}
-                    className="peer sr-only"
-                    defaultChecked={type === "dinner"}
-                  />
-                  <span className="inline-block border-2 border-foreground px-3 py-1 text-xs font-bold uppercase peer-checked:bg-foreground peer-checked:text-background transition-colors hover:bg-muted">
-                    {type}
-                  </span>
-                </label>
-              ))}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider">
+                Start date
+              </label>
+              <Input
+                type="date"
+                name="dateStart"
+                className="border-2 border-foreground"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider">
+                End date
+              </label>
+              <Input
+                type="date"
+                name="dateEnd"
+                className="border-2 border-foreground"
+              />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider">
-              Your name
-            </label>
-            <Input
-              name="creatorName"
-              placeholder="Your name"
-              required
-              className="border-2 border-foreground"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider">
-              Your budget range
-            </label>
-            <BudgetSlider nameMin="minBudget" nameMax="maxBudget" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider">
+                Start time
+              </label>
+              <Input
+                type="time"
+                name="timeStart"
+                className="border-2 border-foreground"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider">
+                End time
+              </label>
+              <Input
+                type="time"
+                name="timeEnd"
+                className="border-2 border-foreground"
+              />
+            </div>
           </div>
 
           <Button
