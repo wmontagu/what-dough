@@ -38,6 +38,19 @@ export default function Home() {
             />
           </div>
 
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider">
+              Location (zipcode) *
+            </label>
+            <Input
+              name="zipcode"
+              placeholder="15213"
+              required
+              maxLength={10}
+              className="border-2 border-foreground"
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider">

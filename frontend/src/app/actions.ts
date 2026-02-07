@@ -9,6 +9,7 @@ export async function createEvent(formData: FormData) {
 
   const name = formData.get("name") as string;
   const description = (formData.get("description") as string) || null;
+  const zipcode = (formData.get("zipcode") as string) || null;
   const dateStart = (formData.get("dateStart") as string) || null;
   const dateEnd = (formData.get("dateEnd") as string) || null;
   const timeStart = (formData.get("timeStart") as string) || null;
@@ -19,6 +20,7 @@ export async function createEvent(formData: FormData) {
     .insert({
       name,
       description,
+      zipcode,
       date_start: dateStart,
       date_end: dateEnd,
       time_start: timeStart,

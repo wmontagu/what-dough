@@ -2,11 +2,12 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, Clock, Lock } from "lucide-react";
+import { CalendarDays, Clock, Lock, MapPin } from "lucide-react";
 import { JoinForm } from "./join-form";
 import { ParticipantList } from "./participant-list";
 import { CloseEventButton } from "./close-event-button";
 import { CopyLinkButton } from "./copy-link-button";
+import { Suggestions } from "./suggestions";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", {
@@ -90,6 +91,12 @@ export default async function EventPage({
                   {event.description}
                 </p>
               )}
+              {event.zipcode && (
+                <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <MapPin className="h-3 w-3 shrink-0" />
+                  {event.zipcode}
+                </span>
+              )}
               {(hasDateRange || hasTimeRange) && (
                 <div className="space-y-2 text-sm text-muted-foreground">
                   {hasDateRange && (
@@ -124,11 +131,24 @@ export default async function EventPage({
           </Card>
         </div>
 
-        {/* Center: join form + close button */}
-        {!isClosed && (
-            <div className="mx-auto space-y-6 min-w-1/2">
-              <JoinForm eventId={id} />
-            </div>
+        {/* Center: join form when open, suggestions when closed */}
+        {!isClosed ? (
+          <div className="mx-auto space-y-6 min-w-1/2">
+            <JoinForm eventId={id} />
+          </div>
+        ) : (
+          <div className="flex-1">
+            <Suggestions
+              eventName={event.name}
+              zipcode={event.zipcode}
+              participants={(participants ?? []).map((p) => ({
+                name: p.name,
+                min_budget: p.min_budget,
+                max_budget: p.max_budget,
+                preferences: p.preferences,
+              }))}
+            />
+          </div>
         )}
 
         {/* Invisible spacer to balance the sidebar so the form is truly centered */}

@@ -2,18 +2,19 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 
-class MemberInput(BaseModel):
+class ParticipantInput(BaseModel):
     name: str
-    preferences: str = Field(..., description="Free-form text describing activity preferences")
-    budget_range: list[float] = Field(..., min_length=2, max_length=2, description="[min, max] budget per person")
-    nessie_account_id: Optional[str] = Field(None, description="Capital One Nessie account ID for transaction history")
-    dietary_restrictions: Optional[str] = None
+    min_budget: int
+    max_budget: int
+    preferences: Optional[str] = None
 
 
-class GroupAnalyzeRequest(BaseModel):
-    members: list[MemberInput] = Field(..., min_length=1)
+class AnalyzeEventRequest(BaseModel):
+    event_name: str
+    description: Optional[str] = None
     zipcode: str
-    date: Optional[str] = None
+    activity_type: Optional[str] = None
+    participants: list[ParticipantInput] = Field(..., min_length=1)
 
 
 class Suggestion(BaseModel):
@@ -26,34 +27,17 @@ class Suggestion(BaseModel):
     booking_link: Optional[str] = None
 
 
-class SpendingPattern(BaseModel):
-    avg_dining: float = 0
-    avg_entertainment: float = 0
-    avg_shopping: float = 0
+class ConsensusBudget(BaseModel):
+    min: float
+    max: float
+    has_overlap: bool
 
 
-class GroupInsights(BaseModel):
-    consensus_budget: list[float]
-    spending_patterns: dict[str, SpendingPattern]
-
-
-class ModelUsage(BaseModel):
-    parsing: str = "google/gemini-2.0-flash-exp"
-    analysis: str = "anthropic/claude-opus-4-20250514"
-    research: str = "openai/gpt-4o"
-    formatting: str = "google/gemini-2.0-flash-exp"
-
-
-class GroupAnalyzeResponse(BaseModel):
-    group_insights: GroupInsights
+class AnalyzeEventResponse(BaseModel):
+    consensus_budget: ConsensusBudget
     suggestions: list[Suggestion]
-    model_usage: ModelUsage
+    model_usage: dict[str, str]
 
 
 class HealthResponse(BaseModel):
     status: str = "healthy"
-
-
-class ErrorResponse(BaseModel):
-    error: str
-    detail: Optional[str] = None
