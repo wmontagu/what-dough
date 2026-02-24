@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 import { createClient } from "@/lib/supabase/server";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -20,6 +22,9 @@ export default async function OGImage({
   const eventName = event?.name ?? "Group Event";
   const location = event?.zipcode ? `near ${event.zipcode}` : null;
 
+  const iconSvg = readFileSync(join(process.cwd(), "src/app/icon.svg"));
+  const iconDataUrl = `data:image/svg+xml;base64,${iconSvg.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
@@ -35,21 +40,14 @@ export default async function OGImage({
         }}
       >
         {/* Logo chip */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#22c55e",
-            width: 96,
-            height: 96,
-            marginBottom: 40,
-          }}
-        >
-          <span style={{ color: "white", fontWeight: 900, fontSize: 32 }}>
-            WD.
-          </span>
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={iconDataUrl}
+          width={96}
+          height={96}
+          alt="what dough logo"
+          style={{ borderRadius: 16, marginBottom: 40 }}
+        />
 
         {/* Event name */}
         <div
