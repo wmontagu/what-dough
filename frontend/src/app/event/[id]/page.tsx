@@ -153,7 +153,7 @@ export default async function EventPage({
         {!isClosed ? (
           <div className="flex-1 md:overflow-y-auto scrollbar-brutal md:min-h-0">
             <div className="max-w-2xl mx-auto h-full">
-              <JoinForm eventId={id} />
+              <JoinForm eventId={id} maxBudget={event.max_budget ?? 100} />
             </div>
           </div>
         ) : (

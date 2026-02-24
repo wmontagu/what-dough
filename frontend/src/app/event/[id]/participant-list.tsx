@@ -69,7 +69,7 @@ export function BudgetSummary({
     ...participants.map((p) => p.max_budget),
     Infinity
   );
-  const hasOverlap = participants.length > 1 && overlapMin <= overlapMax;
+  const hasOverlap = participants.length >= 1 && overlapMin <= overlapMax;
 
   const avgMin =
     participants.length > 0

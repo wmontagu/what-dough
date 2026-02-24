@@ -14,6 +14,9 @@ export async function createEvent(formData: FormData) {
   const dateEnd = (formData.get("dateEnd") as string) || null;
   const timeStart = (formData.get("timeStart") as string) || null;
   const timeEnd = (formData.get("timeEnd") as string) || null;
+  const maxBudget = formData.get("maxBudget")
+    ? parseInt(formData.get("maxBudget") as string, 10)
+    : 100;
 
   const { data: event, error: eventError } = await supabase
     .from("events")
@@ -25,6 +28,7 @@ export async function createEvent(formData: FormData) {
       date_end: dateEnd,
       time_start: timeStart,
       time_end: timeEnd,
+      max_budget: maxBudget,
     })
     .select("id")
     .single();

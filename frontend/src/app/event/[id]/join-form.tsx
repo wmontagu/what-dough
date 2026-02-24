@@ -9,7 +9,13 @@ import { Button } from "@/components/ui/button";
 import { BudgetSlider } from "@/components/budget-slider";
 import { joinEvent } from "@/app/actions";
 
-export function JoinForm({ eventId }: { eventId: string }) {
+export function JoinForm({
+  eventId,
+  maxBudget = 100,
+}: {
+  eventId: string;
+  maxBudget?: number;
+}) {
   const router = useRouter();
   const [error, formAction, isPending] = useActionState(
     async (_prev: string | null, formData: FormData) => {
@@ -51,7 +57,7 @@ export function JoinForm({ eventId }: { eventId: string }) {
             <label className="text-xs font-bold uppercase tracking-wider">
               Your budget range *
             </label>
-            <BudgetSlider nameMin="minBudget" nameMax="maxBudget" />
+            <BudgetSlider nameMin="minBudget" nameMax="maxBudget" max={maxBudget} />
           </div>
 
           <div className="space-y-2">

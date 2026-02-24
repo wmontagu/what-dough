@@ -7,14 +7,19 @@ export function BudgetSlider({
   nameMin,
   nameMax,
   defaultMin = 20,
-  defaultMax = 100,
+  defaultMax = 50,
+  max = 100,
 }: {
   nameMin: string;
   nameMax: string;
   defaultMin?: number;
   defaultMax?: number;
+  max?: number;
 }) {
-  const [range, setRange] = useState([defaultMin, defaultMax]);
+  const [range, setRange] = useState([
+    Math.min(defaultMin, max),
+    Math.min(defaultMax, max),
+  ]);
 
   return (
     <div className="space-y-3">
@@ -28,7 +33,7 @@ export function BudgetSlider({
       </div>
       <Slider
         min={0}
-        max={500}
+        max={max}
         step={5}
         value={range}
         onValueChange={setRange}
