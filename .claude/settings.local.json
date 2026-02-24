@@ -24,7 +24,8 @@
       "WebFetch(domain:www.dedaluslabs.ai)",
       "Bash(npx next lint:*)",
       "Bash(npx tsc:*)",
-      "mcp__supabase__get_advisors"
+      "mcp__supabase__get_advisors",
+      "Bash(tail:*)"
     ]
   }
 }
