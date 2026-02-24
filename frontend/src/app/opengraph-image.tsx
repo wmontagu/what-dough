@@ -37,6 +37,8 @@ export default function OGImage() {
         {/* Wordmark */}
         <div
           style={{
+            display: "flex",
+            alignItems: "baseline",
             color: "white",
             fontSize: 96,
             fontWeight: 900,
@@ -44,7 +46,7 @@ export default function OGImage() {
             letterSpacing: "-3px",
           }}
         >
-          what dough
+          <span>what dough</span>
           <span style={{ color: "#22c55e" }}>.</span>
         </div>
 
