@@ -11,7 +11,7 @@ const mono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "what dough",
-  description: "figure out the budget, together",
+  description: "the yeast you can do for your group budget",
 };
 
 export default async function RootLayout({

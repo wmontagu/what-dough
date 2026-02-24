@@ -1,5 +1,30 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: event } = await supabase
+    .from("events")
+    .select("name")
+    .eq("id", id)
+    .single();
+
+  const title = event ? `${event.name} | what dough` : "what dough";
+  return {
+    title,
+    description: "the yeast you can do for your group budget",
+    openGraph: {
+      title,
+      description: "the yeast you can do for your group budget",
+    },
+  };
+}
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, Clock, Lock, MapPin } from "lucide-react";
