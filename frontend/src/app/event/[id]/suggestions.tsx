@@ -27,9 +27,6 @@ type Participant = {
   preferences: string | null;
 };
 
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
-
 export function Suggestions({
   eventName,
   zipcode,
@@ -54,7 +51,7 @@ export function Suggestions({
 
     async function fetchSuggestions() {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/analyze-event`, {
+        const res = await fetch("/api/analyze-event", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
@@ -109,9 +106,6 @@ export function Suggestions({
       <Card className="border-2 border-destructive shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
         <CardContent className="py-6">
           <p className="text-sm font-bold text-destructive">{error}</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Make sure the backend is running at {BACKEND_URL}
-          </p>
         </CardContent>
       </Card>
     );
