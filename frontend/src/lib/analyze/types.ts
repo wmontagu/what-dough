@@ -11,6 +11,10 @@ export interface AnalyzeEventRequest {
   zipcode: string;
   activity_type?: string | null;
   participants: ParticipantInput[];
+  date_start?: string | null;
+  date_end?: string | null;
+  time_start?: string | null;
+  time_end?: string | null;
 }
 
 export interface Suggestion {

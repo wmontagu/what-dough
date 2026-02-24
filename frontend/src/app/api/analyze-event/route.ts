@@ -1,16 +1,8 @@
 import { NextResponse } from "next/server";
-import type {
-  AnalyzeEventRequest,
-  AnalyzeEventResponse,
-  Suggestion,
-} from "@/lib/analyze/types";
-import {
-  parsePreferences,
-  calculateConsensusBudget,
-  scoreVenues,
-} from "@/lib/analyze/tools";
+import type { AnalyzeEventRequest, AnalyzeEventResponse, Suggestion } from "@/lib/analyze/types";
+import { parsePreferences, calculateConsensusBudget, scoreVenues } from "@/lib/analyze/tools";
 import { generateMockVenues, googleMapsLink } from "@/lib/analyze/mock-venues";
-import { runWithDedalus } from "@/lib/analyze/dedalus";
+import { runWithGroqPlaces } from "@/lib/analyze/groq-places";
 
 export async function POST(request: Request) {
   let body: AnalyzeEventRequest;
@@ -18,10 +10,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json(
-      { detail: "Invalid JSON body" },
-      { status: 400 }
-    );
+    return NextResponse.json({ detail: "Invalid JSON body" }, { status: 400 });
   }
 
   if (!body.zipcode || !body.participants || body.participants.length === 0) {
@@ -31,17 +20,19 @@ export async function POST(request: Request) {
     );
   }
 
-  const dedalusApiKey = process.env.DEDALUS_API_KEY ?? "";
-
-  // --- Dedalus path ---
-  if (dedalusApiKey) {
+  // --- Groq + Google Places path ---
+  if (process.env.GROQ_API_KEY && process.env.GOOGLE_PLACES_API_KEY) {
     try {
-      const result = await runWithDedalus(
-        dedalusApiKey,
+      const result = await runWithGroqPlaces(
         body.event_name,
-        body.activity_type,
         body.zipcode,
-        body.participants
+        body.participants,
+        {
+          dateStart: body.date_start,
+          dateEnd: body.date_end,
+          timeStart: body.time_start,
+          timeEnd: body.time_end,
+        }
       );
 
       if (result.suggestions.length > 0) {
@@ -52,9 +43,8 @@ export async function POST(request: Request) {
         };
         return NextResponse.json(response);
       }
-      // Fall through to local if no suggestions
     } catch (e) {
-      console.warn("Dedalus error, falling back to local pipeline:", e);
+      console.warn("Groq+Places error, falling back to local pipeline:", e);
     }
   }
 
@@ -115,8 +105,7 @@ function runLocal(body: AnalyzeEventRequest): AnalyzeEventResponse {
     why_it_fits: v.why_it_fits || "",
     fit_score: v.fit_score ?? 0.5,
     location: v.location || null,
-    booking_link:
-      v.booking_link || googleMapsLink(v.name, v.location || ""),
+    booking_link: v.booking_link || googleMapsLink(v.name, v.location || ""),
   }));
 
   return {

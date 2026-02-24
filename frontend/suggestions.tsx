@@ -16,7 +16,7 @@ type Suggestion = {
 
 type AnalyzeResponse = {
   consensus_budget: { min: number; max: number; has_overlap: boolean };
-  suggestions: Suggestion[];
+  n: Suggestion[];
   model_usage: Record<string, string>;
 };
 
@@ -27,42 +27,29 @@ type Participant = {
   preferences: string | null;
 };
 
-export function Suggestions({
+export function n({
   eventName,
   zipcode,
   participants,
-  savedRecommendations,
-  dateStart,
-  dateEnd,
-  timeStart,
-  timeEnd,
 }: {
   eventName: string;
   zipcode: string | null;
   participants: Participant[];
-  savedRecommendations: AnalyzeResponse | null;
-  dateStart?: string | null;
-  dateEnd?: string | null;
-  timeStart?: string | null;
-  timeEnd?: string | null;
 }) {
-  const [data, setData] = useState<AnalyzeResponse | null>(savedRecommendations);
-  const [loading, setLoading] = useState(savedRecommendations === null);
+  const [data, setData] = useState<AnalyzeResponse | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Already have saved recommendations — no need to fetch
-    if (savedRecommendations !== null) return;
-
     if (!zipcode || participants.length === 0) {
       setLoading(false);
-      setError("Need a zipcode and at least one participant to get suggestions.");
+      setError("Need a zipcode and at least one participant to get n.");
       return;
     }
 
     const controller = new AbortController();
 
-    async function fetchSuggestions() {
+    async function fetchn() {
       try {
         const res = await fetch("/api/analyze-event", {
           method: "POST",
@@ -77,10 +64,6 @@ export function Suggestions({
               max_budget: p.max_budget,
               preferences: p.preferences,
             })),
-            date_start: dateStart,
-            date_end: dateEnd,
-            time_start: timeStart,
-            time_end: timeEnd,
           }),
         });
 
@@ -93,15 +76,17 @@ export function Suggestions({
         setData(json);
       } catch (err: unknown) {
         if (err instanceof DOMException && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : "Failed to load suggestions");
+        setError(
+          err instanceof Error ? err.message : "Failed to load n"
+        );
       } finally {
         setLoading(false);
       }
     }
 
-    fetchSuggestions();
+    fetchn();
     return () => controller.abort();
-  }, [eventName, zipcode, participants, savedRecommendations]);
+  }, [eventName, zipcode, participants]);
 
   if (loading) {
     return (
@@ -126,11 +111,13 @@ export function Suggestions({
     );
   }
 
-  if (!data || data.suggestions.length === 0) {
+  if (!data || data.n.length === 0) {
     return (
       <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
         <CardContent className="py-6">
-          <p className="text-sm text-muted-foreground">No suggestions found. Try again later.</p>
+          <p className="text-sm text-muted-foreground">
+            No n found. Try again later.
+          </p>
         </CardContent>
       </Card>
     );
@@ -146,46 +133,55 @@ export function Suggestions({
       </CardHeader>
       <CardContent className="flex-1 min-h-0 overflow-y-auto scrollbar-brutal">
         <div className="space-y-3">
-          {data.suggestions.map((s, i) => (
-            <div
-              key={i}
-              className="border-2 border-foreground p-4 space-y-2"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="font-bold text-sm">{s.name}</h3>
-                  <span className="text-xs uppercase tracking-wider text-muted-foreground">{s.type}</span>
-                </div>
-              </div>
-
-              <p className="hidden md:block text-xs text-muted-foreground">{s.why_it_fits}</p>
-
-              <div className="flex items-center gap-4 text-xs">
-                <span className="flex items-center gap-1 font-bold">
-                  <DollarSign className="h-3 w-3" />
-                  {s.cost_per_person}/person
+        {data.n.map((s, i) => (
+          <div
+            key={i}
+            className="border-2 border-foreground p-4 space-y-2"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h3 className="font-bold text-sm">{s.name}</h3>
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {s.type}
                 </span>
-                {s.location && (
-                  <span className="flex items-center gap-1 text-muted-foreground">
-                    <MapPin className="h-3 w-3" />
-                    {s.location}
-                  </span>
-                )}
               </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <Star className="h-3 w-3" />
+                <span className="text-xs font-bold">
+                  {Math.round(s.fit_score * 100)}%
+                </span>
+              </div>
+            </div>
 
-              {s.booking_link && (
-                <a
-                  href={s.booking_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-money hover:underline"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                  View on Maps
-                </a>
+            <p className="hidden md:block text-xs text-muted-foreground">{s.why_it_fits}</p>
+
+            <div className="flex items-center gap-4 text-xs">
+              <span className="flex items-center gap-1 font-bold">
+                <DollarSign className="h-3 w-3" />
+                {s.cost_per_person}/person
+              </span>
+              {s.location && (
+                <span className="flex items-center gap-1 text-muted-foreground">
+                  <MapPin className="h-3 w-3" />
+                  {s.location}
+                </span>
               )}
             </div>
-          ))}
+
+            {s.booking_link && (
+              <a
+                href={s.booking_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-money hover:underline"
+              >
+                <ExternalLink className="h-3 w-3" />
+                {"View on Maps"}
+                  
+              </a>
+            )}
+          </div>
+        ))}
         </div>
       </CardContent>
     </Card>

@@ -166,7 +166,7 @@ export default async function EventPage({
               {/* Buttons pinned to bottom */}
               <div className="gap-3 flex flex-col shrink-0">
                 <CopyLinkButton />
-                <CloseEventButton eventId={id} />
+                <CloseEventButton eventId={id} isClosed={isClosed} />
               </div>
             </CardContent>
           </Card>
@@ -190,6 +190,11 @@ export default async function EventPage({
                 max_budget: p.max_budget,
                 preferences: p.preferences,
               }))}
+              savedRecommendations={event.recommendations ?? null}
+              dateStart={event.date_start}
+              dateEnd={event.date_end}
+              timeStart={event.time_start}
+              timeEnd={event.time_end}
             />
           </div>
         )}

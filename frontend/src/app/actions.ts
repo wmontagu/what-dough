@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { runWithGroqPlaces } from "@/lib/analyze/groq-places";
 
 export async function createEvent(formData: FormData) {
   const supabase = await createClient();
@@ -80,13 +81,36 @@ export async function closeEvent(formData: FormData) {
 
   const eventId = formData.get("eventId") as string;
 
+  // Close the event first
   const { error } = await supabase
     .from("events")
     .update({ is_closed: true })
     .eq("id", eventId);
 
-  if (error) {
-    throw new Error("Failed to close event");
+  if (error) throw new Error("Failed to close event");
+
+  // Fetch event + participants to generate recommendations
+  const [{ data: event }, { data: participants }] = await Promise.all([
+    supabase.from("events").select("name, zipcode, date_start, date_end, time_start, time_end").eq("id", eventId).single(),
+    supabase.from("participants").select("name, min_budget, max_budget, preferences").eq("event_id", eventId),
+  ]);
+
+  if (event?.zipcode && participants && participants.length > 0) {
+    try {
+      const result = await runWithGroqPlaces(event.name, event.zipcode, participants, {
+        dateStart: event.date_start,
+        dateEnd: event.date_end,
+        timeStart: event.time_start,
+        timeEnd: event.time_end,
+      });
+      await supabase
+        .from("events")
+        .update({ recommendations: result })
+        .eq("id", eventId);
+    } catch (e) {
+      // Non-fatal — page will fall back to generating on load
+      console.warn("Failed to generate recommendations on close:", e);
+    }
   }
 
   revalidatePath(`/event/${eventId}`);
