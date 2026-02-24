@@ -20,7 +20,7 @@ export interface AnalyzeEventRequest {
 export interface Suggestion {
   name: string;
   type: string;
-  cost_per_person: number;
+  cost_per_person: number | null;
   why_it_fits: string;
   fit_score: number;
   location: string | null;

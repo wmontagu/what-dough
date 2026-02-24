@@ -136,6 +136,7 @@ async function geocodeZipcode(
 /** Single AI call: synthesize event + participant data into a Places searchNearby query */
 async function buildSearchParams(
   eventName: string,
+  description: string | null | undefined,
   participants: ParticipantInput[],
   consensus: ConsensusBudget,
   timing: EventTiming
@@ -173,7 +174,7 @@ async function buildSearchParams(
   const prompt = `/no_think
 You are given details about a group outing. Produce Google Places API search parameters to find the best venue options for this group.
 
-Event: "${eventName}"
+Event: "${eventName}"${description ? `\nDescription: ${description}` : ""}
 Budget per person: $${consensus.min}–$${consensus.max}
 ${timingLine}
 Participant preferences:
@@ -253,14 +254,15 @@ async function searchNearby(
   return (data.places as Place[]) ?? [];
 }
 
-/** Derive a cost estimate from priceRange midpoint, falling back to priceLevel */
-function estimateCost(place: Place): number {
+/** Derive a cost estimate from priceRange midpoint, falling back to priceLevel. Returns null if no data. */
+function estimateCost(place: Place): number | null {
   const start = parseInt(place.priceRange?.startPrice?.units ?? "", 10);
   const end = parseInt(place.priceRange?.endPrice?.units ?? "", 10);
   if (!isNaN(start) && !isNaN(end)) return Math.round((start + end) / 2);
   if (!isNaN(start)) return start;
   if (!isNaN(end)) return end;
-  return PRICE_LEVEL_COST[place.priceLevel ?? ""] ?? 25;
+  const fromLevel = PRICE_LEVEL_COST[place.priceLevel ?? ""];
+  return fromLevel ?? null;
 }
 
 /** Map a raw Place to a Suggestion — no AI, just data transformation */
@@ -288,13 +290,15 @@ function placeToSuggestion(
     }
   }
 
-  // Budget score: 1.0 in range, degrades outside
+  // Budget score: 1.0 in range, degrades outside, neutral 0.75 if unknown
   const budgetScore =
-    costPerPerson >= consensus.min && costPerPerson <= consensus.max
-      ? 1.0
-      : costPerPerson < consensus.min
-        ? 0.7
-        : Math.max(0, 1 - (costPerPerson - consensus.max) / consensus.max);
+    costPerPerson === null
+      ? 0.75
+      : costPerPerson >= consensus.min && costPerPerson <= consensus.max
+        ? 1.0
+        : costPerPerson < consensus.min
+          ? 0.7
+          : Math.max(0, 1 - (costPerPerson - consensus.max) / consensus.max);
 
   // Rating score: normalized 0–1
   const ratingScore = Math.min(rating, 5) / 5;
@@ -341,7 +345,8 @@ export async function runWithGroqPlaces(
   eventName: string,
   zipcode: string,
   participants: ParticipantInput[],
-  timing: EventTiming = {}
+  timing: EventTiming = {},
+  description?: string | null
 ): Promise<{
   suggestions: Array<Record<string, unknown>>;
   consensus_budget: ConsensusBudget;
@@ -356,7 +361,7 @@ export async function runWithGroqPlaces(
   // AI builds search params + geocode run in parallel
   const [coords, searchParams] = await Promise.all([
     geocodeZipcode(zipcode),
-    buildSearchParams(eventName, participants, consensus, timing),
+    buildSearchParams(eventName, description, participants, consensus, timing),
   ]);
 
   const places = await searchNearby(coords.lat, coords.lng, searchParams);

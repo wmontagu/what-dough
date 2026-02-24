@@ -208,6 +208,7 @@ export default async function EventPage({
           <div className="order-1 md:order-2 flex-1 md:min-h-0">
             <Suggestions
               eventName={event.name}
+              description={event.description}
               zipcode={event.zipcode}
               participants={(participants ?? []).map((p) => ({
                 name: p.name,

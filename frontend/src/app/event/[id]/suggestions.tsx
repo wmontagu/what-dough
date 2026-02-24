@@ -29,6 +29,7 @@ type Participant = {
 
 export function Suggestions({
   eventName,
+  description,
   zipcode,
   participants,
   savedRecommendations,
@@ -38,6 +39,7 @@ export function Suggestions({
   timeEnd,
 }: {
   eventName: string;
+  description?: string | null;
   zipcode: string | null;
   participants: Participant[];
   savedRecommendations: AnalyzeResponse | null;
@@ -70,6 +72,7 @@ export function Suggestions({
           signal: controller.signal,
           body: JSON.stringify({
             event_name: eventName,
+            description,
             zipcode,
             participants: participants.map((p) => ({
               name: p.name,
@@ -163,7 +166,7 @@ export function Suggestions({
               <div className="flex items-center gap-4 text-xs">
                 <span className="flex items-center gap-1 font-bold">
                   <DollarSign className="h-3 w-3" />
-                  {s.cost_per_person}/person
+                  {s.cost_per_person !== null ? `${s.cost_per_person}/person` : "price unknown"}
                 </span>
                 {s.location && (
                   <span className="flex items-center gap-1 text-muted-foreground">

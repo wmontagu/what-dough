@@ -32,7 +32,8 @@ export async function POST(request: Request) {
           dateEnd: body.date_end,
           timeStart: body.time_start,
           timeEnd: body.time_end,
-        }
+        },
+        body.description,
       );
 
       if (result.suggestions.length > 0) {
@@ -120,7 +121,7 @@ function toSuggestion(s: Record<string, unknown>): Suggestion {
   return {
     name: String(s.name ?? "Unknown"),
     type: String(s.type ?? "activity"),
-    cost_per_person: Number(s.cost_per_person ?? 0),
+    cost_per_person: s.cost_per_person != null ? Number(s.cost_per_person) : null,
     why_it_fits: String(s.why_it_fits ?? ""),
     fit_score: Math.max(0, Math.min(1, fitScore)),
     location: s.location ? String(s.location) : null,

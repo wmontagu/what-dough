@@ -91,18 +91,24 @@ export async function closeEvent(formData: FormData) {
 
   // Fetch event + participants to generate recommendations
   const [{ data: event }, { data: participants }] = await Promise.all([
-    supabase.from("events").select("name, zipcode, date_start, date_end, time_start, time_end").eq("id", eventId).single(),
+    supabase.from("events").select("name, description, zipcode, date_start, date_end, time_start, time_end").eq("id", eventId).single(),
     supabase.from("participants").select("name, min_budget, max_budget, preferences").eq("event_id", eventId),
   ]);
 
   if (event?.zipcode && participants && participants.length > 0) {
     try {
-      const result = await runWithGroqPlaces(event.name, event.zipcode, participants, {
-        dateStart: event.date_start,
-        dateEnd: event.date_end,
-        timeStart: event.time_start,
-        timeEnd: event.time_end,
-      });
+      const result = await runWithGroqPlaces(
+        event.name,
+        event.zipcode,
+        participants,
+        {
+          dateStart: event.date_start,
+          dateEnd: event.date_end,
+          timeStart: event.time_start,
+          timeEnd: event.time_end,
+        },
+        event.description,
+      );
       await supabase
         .from("events")
         .update({ recommendations: result })
