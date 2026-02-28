@@ -85,6 +85,19 @@
   }
 }
 
+/* iOS date/time input normalization */
+input[type="date"],
+input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 2.25rem;
+}
+
+input[type="date"]::-webkit-date-and-time-value,
+input[type="time"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+
 /* Neo-brutalist scrollbar */
 .scrollbar-brutal {
   scrollbar-width: thin;

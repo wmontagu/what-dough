@@ -74,7 +74,7 @@ export default function Home() {
               <Input
                 type="date"
                 name="dateStart"
-                className="border-2 border-foreground w-full text-xs"
+                className="border-2 border-foreground w-full"
               />
             </div>
             <div className="space-y-2 min-w-0">
@@ -84,7 +84,7 @@ export default function Home() {
               <Input
                 type="date"
                 name="dateEnd"
-                className="border-2 border-foreground w-full text-xs"
+                className="border-2 border-foreground w-full"
               />
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function Home() {
               <Input
                 type="time"
                 name="timeStart"
-                className="border-2 border-foreground w-full text-xs"
+                className="border-2 border-foreground w-full"
               />
             </div>
             <div className="space-y-2 min-w-0">
@@ -107,7 +107,7 @@ export default function Home() {
               <Input
                 type="time"
                 name="timeEnd"
-                className="border-2 border-foreground w-full text-xs"
+                className="border-2 border-foreground w-full"
               />
             </div>
           </div>
