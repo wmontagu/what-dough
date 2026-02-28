@@ -130,7 +130,7 @@ export default async function EventPage({
           </Card>
 
           {/* Details box */}
-          <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-1 md:min-h-0 overflow-hidden">
+          <Card className={`border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-1 md:min-h-0 overflow-hidden${event.description ? "" : " gap-2"}`}>
             <CardHeader className="shrink-0">
               <CardTitle className="text-sm font-bold uppercase tracking-wide">
                 Details

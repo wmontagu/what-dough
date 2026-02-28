@@ -47,7 +47,7 @@ export function JoinForm({
             </label>
             <Input
               name="name"
-              placeholder="Your name"
+              placeholder="audrey"
               required
               className="border-2 border-foreground"
             />
@@ -66,13 +66,13 @@ export function JoinForm({
             </label>
             <Textarea
               name="preferences"
-              placeholder="Thai food, scary movie, outdoor activity..."
+              placeholder="thai food, scary movie, outdoor activity..."
               rows={2}
               className="border-2 border-foreground"
             />
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider">
               Phone number (optional)
             </label>
@@ -85,7 +85,7 @@ export function JoinForm({
               placeholder="+1 (555) 123-4567"
               className="border-2 border-foreground"
             />
-          </div>
+          </div> */}
 
           {error && (
             <p className="text-sm font-bold text-destructive">{error}</p>

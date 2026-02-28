@@ -161,7 +161,7 @@ export function ParticipantList({
 
       {!isClosed && participants.length === 0 && (
         <p className="text-sm text-muted-foreground">
-          No one has joined yet. Share the link to get started!
+          no one's here yet — share the link!
         </p>
       )}
     </div>

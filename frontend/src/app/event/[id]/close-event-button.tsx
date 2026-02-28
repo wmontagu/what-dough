@@ -32,8 +32,14 @@ export function CloseEventButton({ eventId, isClosed }: { eventId: string; isClo
         className="w-full border-2 border-foreground bg-foreground text-background font-bold uppercase tracking-wider hover:bg-foreground/80 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50"
       >
         <Lock className="h-4 w-4 mr-2" />
-        {isClosed ? "Event Closed" : isPending ? "Closing..." : "Close & Save Event"}
+        {isClosed ? "Event Closed" : isPending ? "Closing..." : "show results"}
       </Button>
+      {!isClosed && (
+        <div className="text-xs text-muted-foreground mt-2 space-y-0.5">
+          <p>share the link with the crew</p>
+          <p>once everyone&apos;s in, hit show results</p>
+        </div>
+      )}
     </form>
   );
 }
