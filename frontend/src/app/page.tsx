@@ -20,7 +20,7 @@ export default function Home() {
             </label>
             <Input
               name="name"
-              placeholder="Birthday dinner for Alex"
+              placeholder="will's birthday dinner"
               required
               className="border-2 border-foreground"
             />
@@ -32,7 +32,7 @@ export default function Home() {
             </label>
             <Textarea
               name="description"
-              placeholder="What's the occasion? Any details people should know?"
+              placeholder="anything the group kneads to know?"
               rows={3}
               className="border-2 border-foreground"
             />

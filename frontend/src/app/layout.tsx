@@ -45,7 +45,7 @@ export default async function RootLayout({
           </div>
           {count !== null && (
             <footer className="py-4 text-center text-xs text-muted-foreground shrink-0">
-              {count.toLocaleString()} total event{count !== 1 ? "s" : ""}, budgeted better with What Dough.
+              {count.toLocaleString()} total event{count !== 1 ? "s" : ""}, budgeted better with what dough.
             </footer>
           )}
         </main>
