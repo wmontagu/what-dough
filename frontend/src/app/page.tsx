@@ -66,48 +66,48 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2 min-w-0">
               <label className="text-xs font-bold uppercase tracking-wider">
                 Start date
               </label>
               <Input
                 type="date"
                 name="dateStart"
-                className="border-2 border-foreground"
+                className="border-2 border-foreground w-full text-xs"
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 min-w-0">
               <label className="text-xs font-bold uppercase tracking-wider">
                 End date
               </label>
               <Input
                 type="date"
                 name="dateEnd"
-                className="border-2 border-foreground"
+                className="border-2 border-foreground w-full text-xs"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2 min-w-0">
               <label className="text-xs font-bold uppercase tracking-wider">
                 Start time
               </label>
               <Input
                 type="time"
                 name="timeStart"
-                className="border-2 border-foreground"
+                className="border-2 border-foreground w-full text-xs"
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 min-w-0">
               <label className="text-xs font-bold uppercase tracking-wider">
                 End time
               </label>
               <Input
                 type="time"
                 name="timeEnd"
-                className="border-2 border-foreground"
+                className="border-2 border-foreground w-full text-xs"
               />
             </div>
           </div>
