@@ -6,8 +6,8 @@ import { Slider } from "@/components/ui/slider";
 export function BudgetSlider({
   nameMin,
   nameMax,
-  defaultMin = 20,
-  defaultMax = 50,
+  defaultMin = 0,
+  defaultMax,
   max = 100,
 }: {
   nameMin: string;
@@ -18,7 +18,7 @@ export function BudgetSlider({
 }) {
   const [range, setRange] = useState([
     Math.min(defaultMin, max),
-    Math.min(defaultMax, max),
+    Math.min(defaultMax ?? Math.round(max / 2), max),
   ]);
 
   return (
